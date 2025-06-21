@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice History</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    #historyContainer {
+      max-width: 800px;
+      margin: auto;
+    }
+    .invoice-entry {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      background: white;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Saved Invoice History</h1>
+  <div id="historyContainer"></div>
+
+  <script>
+    const history = JSON.parse(localStorage.getItem("invoiceHistory") || "[]");
+    const container = document.getElementById("historyContainer");
+
+    if (history.length === 0) {
+      container.innerHTML = "<p>No invoice history found.</p>";
+    } else {
+      history.forEach(inv => {
+        const div = document.createElement("div");
+        div.className = "invoice-entry";
+        div.innerHTML = `
+          <strong>Invoice No:</strong> ${inv.invoiceNo} <br/>
+          <strong>Customer:</strong> ${inv.customerName} <br/>
+          <strong>Date:</strong> ${inv.date} <br/>
+          <strong>Items:</strong> <ul>${
+            inv.items.map(item => `<li>${item.description}, Qty: ${item.qty}, Rate: ${item.rate}, Amount: ${item.amount}</li>`).join("")
+          }</ul>
+          <em>Saved At: ${inv.savedAt}</em>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

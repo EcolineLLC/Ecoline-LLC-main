@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - Ecoline LLC</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef1f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .auth-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    input {
+      width: 90%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 95%;
+      padding: 10px;
+      margin: 10px 0;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .toggle {
+      font-size: 0.9em;
+      margin-top: 10px;
+      color: #555;
+      cursor: pointer;
+    }
+    .error {
+      color: red;
+      font-size: 0.85em;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2 id="formTitle">Login</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <div class="error" id="errorMessage"></div>
+    <button onclick="handleAuth()">Login</button>
+    <div class="toggle" onclick="toggleForm()">Don't have an account? Sign Up</div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBNiMX4awN-XHiJveJmkjoBl2C5E0VpOXQ",
+      authDomain: "ecoline-llc.firebaseapp.com",
+      projectId: "ecoline-llc",
+      storageBucket: "ecoline-llc.firebasestorage.app",
+      messagingSenderId: "406541770749",
+      appId: "1:406541770749:web:aadeb991be64f8eaedc394",
+      measurementId: "G-GWS7VFK2JT"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    let isLogin = true;
+
+    window.toggleForm = () => {
+      isLogin = !isLogin;
+      document.getElementById("formTitle").textContent = isLogin ? "Login" : "Sign Up";
+      document.querySelector("button").textContent = isLogin ? "Login" : "Sign Up";
+      document.querySelector(".toggle").textContent = isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login";
+      document.getElementById("errorMessage").textContent = "";
+    };
+
+    window.handleAuth = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorDiv = document.getElementById("errorMessage");
+
+      try {
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          await createUserWithEmailAndPassword(auth, email, password);
+        }
+        window.location.href = "index.html";
+      } catch (error) {
+        errorDiv.textContent = error.message;
+      }
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is already logged in
+        window.location.href = "home.html";
+      }
+    });
+    
+  </script>
+</body>
+</html>
